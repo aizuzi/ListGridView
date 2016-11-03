@@ -12,10 +12,14 @@ import java.util.List;
 /**
  * Created by yili on 16/10/24.
  */
-public class ListGridView<T> extends ViewGroup {
+public class ListGridView<T> extends ViewGroup  implements View.OnClickListener{
 
     public interface GridViewAdapter<T>{
         void updateItem(T item, View itemView, int position);
+    }
+
+    public interface OnGridItemClickListener<T>{
+        void onGridItemClick(View view,T t,int position);
     }
 
     private List<T> mLists;
@@ -33,6 +37,8 @@ public class ListGridView<T> extends ViewGroup {
     private int mItemLayoutRes;
 
     private GridViewAdapter mGridViewAdapter;
+
+    private OnGridItemClickListener mOnGridItemClickListener;
 
     public ListGridView(Context context) {
         super(context);
@@ -101,6 +107,7 @@ public class ListGridView<T> extends ViewGroup {
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         for (int i = 0,size = mLists.size(); i < size; i++) {
             View itemView = layoutInflater.inflate(mItemLayoutRes,null);
+            itemView.setOnClickListener(this);
             T t = mLists.get(i);
             if(mGridViewAdapter != null){
                 mGridViewAdapter.updateItem(t,itemView,i);
@@ -117,6 +124,10 @@ public class ListGridView<T> extends ViewGroup {
         this.horizontalSpacing = horizontalSpacing;
     }
 
+    public void setOnGridItemClickListener(OnGridItemClickListener<? extends T> onGridItemClickListener) {
+        mOnGridItemClickListener = onGridItemClickListener;
+    }
+
     public void setGridViewAdapter(GridViewAdapter<? extends T> gridViewAdapter) {
         mGridViewAdapter = gridViewAdapter;
     }
@@ -130,5 +141,19 @@ public class ListGridView<T> extends ViewGroup {
     public void setColumn(int column) {
         this.column = column;
         requestLayout();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int childViewSize = getChildCount();
+
+        for (int i = 0; i < childViewSize; i++) {
+            if(v == getChildAt(i)){
+                mOnGridItemClickListener.onGridItemClick(getChildAt(i),mLists.get(i),i);
+                break;
+            }
+        }
+
     }
 }

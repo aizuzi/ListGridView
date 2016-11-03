@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ListViewCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Random;
 
 public class SampleActivity extends AppCompatActivity {
+
+    private static final String TAG = "SampleActivity";
 
     private ListViewCompat mListView;
 
@@ -88,12 +91,19 @@ public class SampleActivity extends AppCompatActivity {
                     trainer_avatar.setImageURI(Uri.parse(""+item.getAvatarUrl()));
                 }
             });
-            listGridView.refreshData(getDatds(i),R.layout.item_user);
+            //设置Item点击事件
+            listGridView.setOnGridItemClickListener(new ListGridView.OnGridItemClickListener<GridItemBean>() {
+                @Override
+                public void onGridItemClick(View view, GridItemBean bean, int position) {
+                    Log.d(TAG,"onGridItemClick "+position);
+                }
+            });
+            listGridView.refreshData(getDatas(),R.layout.item_user);
             return listGridView;
         }
     }
 
-    public List<GridItemBean> getDatds(int position){
+    public List<GridItemBean> getDatas(){
         List<GridItemBean> lists = new ArrayList<>();
         int size =  new Random().nextInt(10);
         for (int i = 0; i < size; i++) {
